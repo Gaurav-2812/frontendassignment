@@ -1,0 +1,202 @@
+<style>
+    .fa-bounce-on-hover {
+            transition: transform 0.2s ease-in-out, font-size 0.2s ease-in-out;
+        }
+
+        .fa-bounce-on-hover:hover {
+            transform: translateY(-5px); /* Adjust the distance of the bounce */
+            font-size: 1.2em; /* Increase the font size on hover */
+        }
+    .custom-primary {
+    background-color: #9F91CC; /* Blue color */
+    /* You can also set other properties like background-color, border-color, etc. */
+    }
+    .back{
+        background-color: #E8FFCE;
+    }
+    .hide{
+        background-color: #96B6C5;
+    }
+    .complete{
+        background-color: #5B9A8B;
+    }
+    .add{
+        background-color: #9EB384;
+        color: white;
+    }
+    .details{
+        background-color: #F4EEEE;
+    }
+    .details:hover{
+        background-color: #b0b0b0;
+        transform: translateY(-5px);
+    }
+    @media (max-width: 320px) {
+        .details .fa-bounce-on-hover {
+            display: inline-block; /* Show the Font Awesome icon on small screens */
+        }
+
+        .details::after {
+            content: none; /* Hide the "Show Details" text on small screens */
+        }
+    }
+    @media (max-width: 320px) {
+        /* Add styles for small screens here */
+        .custom-input,
+        .custom-primary {
+            font-size: 0.8rem; /* Decrease font size for small screens */
+        }
+        
+        .add,
+        .details {
+            padding: 0.25rem 0.5rem; /* Adjust padding for small screens */
+        }
+    }
+    @media (max-width: 767px) {
+        .custom-input,
+        .custom-primary {
+            font-size: 0.8rem; /* Decrease font size for smaller screens */
+        }
+
+        .add,
+        .details {
+            padding: 0.25rem 0.5rem; /* Adjust padding for smaller screens */
+        }
+    }
+</style>
+<div class="container-fluid back">
+    <div class="container back">
+        <div class="row" style="min-height: 500px;">
+            <div class="col"></div>
+            <div class="col-8 mt-4">
+                <div class="bg-white shadow p-4 rounded">
+                    <div class="card mb-3 custom-primary">
+                        <h4 class="text-white ps-3 pt-2 pb-2"><i class="fa-solid fa-clipboard-list fa-lg me-2"></i>To Do List</h4>
+                    </div>
+                    <form #taskForm="ngForm" class="m-2">
+                        <div class="mb-3">
+                            <input type="text" class="form-control custom-input" placeholder="Enter Task" name="task" [(ngModel)]="addTaskValue"
+                                required minlength="3" #taskInput="ngModel">
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control custom-input" placeholder="Description" name="description" [(ngModel)]="addTaskDescription"
+                                required minlength="3" #descriptionInput="ngModel">
+                        </div>
+                        <div class="mb-3">
+                            <input type="date" class="form-control custom-input" name="dueDate" [(ngModel)]="addDueDate" required #dueDateInput="ngModel">
+                        </div>
+                        <button class="btn add" [disabled]="!(taskInput.valid && descriptionInput.valid && dueDateInput.valid)" 
+                            type="button" (click)="addTask()">
+                            <div class="fa-bounce-on-hover">Add</div>
+                        </button>
+                    </form>
+                    <div class="mt-4">
+                        <button class="btn hide m-2 fa-bounce-on-hover" (click)="toggleTasksVisibility()">
+                            {{ showIncompleteTasks ? 'Hide Incomplete Tasks' : 'Show Incomplete Tasks' }}
+                        </button>
+                        <button class="btn complete m-2 fa-bounce-on-hover" (click)="toggleCompletedTasksVisibility()">
+                            {{ showCompleteTasks ? 'Hide Completed Tasks' : 'Show Completed Tasks' }}
+                        </button>
+                    </div>
+                    <div *ngIf="showIncompleteTasks">
+                        <h4 class="text-primary mt-4">Incomplete Tasks:</h4>
+                        <div style="overflow-y:auto; max-height: 350px;">
+                            <div class="m-3" *ngFor="let task of incompleteTaskArr">
+                                <div class="p-3 rounded border shadow">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5>{{ task.title }}</h5>
+                                        <button class="btn details"  (click)="toggleTaskDetails(task)">
+                                            <ng-container *ngIf="isSmallScreen; else showDetailsButton">
+                                                <i class="fa-solid fa-eye fa-bounce-on-hover"></i>
+                                            </ng-container>
+                                            <ng-template #showDetailsButton>
+                                                {{ task.showDetails ? 'Hide Details' : 'Show Details' }}
+                                            </ng-template>
+                                        </button>
+                                    </div>
+                                    <div *ngIf="task.showDetails" class="mt-2">
+                                        <p>Description: {{ task.description }}</p>
+                                        <p>Due Date: {{ task.dueDate | date }}</p>
+                                    </div>
+                                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" type="button" data-bs-target="#editModal"
+                                        (click)="call(task)"><i class="fa-solid fa-pencil fa-bounce-on-hover"></i></button>
+                                    <button class="btn btn-outline-danger me-2" (click)="deleteTask(task)"><i class="fa-solid fa-trash fa-bounce-on-hover"></i></button>
+                                    <button class="btn btn-outline-success" (click)="completeTask(task)"><i class="fa-solid fa-check fa-bounce-on-hover"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="showCompleteTasks">
+                        <h4 class="text-success mt-4">Completed Tasks:</h4>
+                        <div style="overflow-y:auto; max-height: 350px;">
+                            <div class="m-3" *ngFor="let task of completedTaskArr">
+                                <div class="p-3 rounded border shadow">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5>{{ task.title }}</h5>
+                                        <button class="btn details"  (click)="toggleTaskDetails(task)">
+                                            <ng-container *ngIf="isSmallScreen; else showDetailsButton">
+                                                <i class="fa-solid fa-eye fa-bounce-on-hover"></i>
+                                            </ng-container>
+                                            <ng-template #showDetailsButton>
+                                                {{ task.showDetails ? 'Hide Details' : 'Show Details' }}
+                                            </ng-template>
+                                        </button>
+                                    </div>
+                                    <div *ngIf="task.showDetails" class="mt-2">
+                                        <p>Description: {{ task.description }}</p>
+                                        <p>Due Date: {{ task.dueDate | date }}</p>
+                                    </div>
+                                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" type="button" data-bs-target="#editModal"
+                                        (click)="call(task)"><i class="fa-solid fa-pencil fa-bounce-on-hover"></i></button>
+                                    <button class="btn btn-outline-danger me-2" (click)="deleteTask(task)"><i class="fa-solid fa-trash fa-bounce-on-hover"></i></button>
+                                    <button class="btn btn-outline-warning" (click)="incompleteTask(task)"><i class="fa-solid fa-xmark fa-bounce-on-hover"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</div>
+  
+  <!-- Edit Task Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Edit Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #editTaskForm="ngForm">
+            <div class="mb-3">
+              <input type="text" class="form-control" placeholder="Enter Task" name="task" [(ngModel)]="editTaskValue"
+                required minlength="3" #editTaskInput="ngModel">
+              <div class="text-danger" *ngIf="editTaskInput.invalid && (editTaskInput.dirty || editTaskInput.touched)">
+                Task is required and must be at least 3 characters long.
+              </div>
+            </div>
+            <div class="mb-3">
+              <input type="text" class="form-control" placeholder="Description" name="description" [(ngModel)]="editTaskDescription"
+                required minlength="3" #editDescriptionInput="ngModel">
+              <div class="text-danger" *ngIf="editDescriptionInput.invalid && (editDescriptionInput.dirty || editDescriptionInput.touched)">
+                Description is required and must be at least 3 characters long.
+              </div>
+            </div>
+            <div class="mb-3">
+              <input type="date" class="form-control" name="dueDate" [(ngModel)]="editDueDate" required #editDueDateInput="ngModel">
+              <div class="text-danger" *ngIf="editDueDateInput.invalid && (editDueDateInput.dirty || editDueDateInput.touched)">
+                Due Date is required.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-{{ editTaskForm.invalid ? 'secondary' : 'primary' }}" data-bs-dismiss="modal" (click)="editTask()" [disabled]="editTaskForm.invalid">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
