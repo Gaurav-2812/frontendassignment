@@ -1,4 +1,10 @@
 <style>
+    /* body, input, button, h4, h5 {
+        font-family: 'Lato', sans-serif;
+    } */
+    body, input, button, h4, h5 {
+        font-family: 'Poppins', sans-serif;
+    }
     .fa-bounce-on-hover {
             transition: transform 0.2s ease-in-out, font-size 0.2s ease-in-out;
         }
@@ -8,20 +14,24 @@
             font-size: 1.2em; /* Increase the font size on hover */
         }
     .custom-primary {
-    background-color: #9F91CC; /* Blue color */
+    background-color: #7C73E6; /* Blue color */
     /* You can also set other properties like background-color, border-color, etc. */
     }
     .back{
-        background-color: #E8FFCE;
+        background-color: #C4C1E0;
     }
     .hide{
-        background-color: #96B6C5;
+        background-color: #89A3B2;
+        /* font-family: sans-serif; */
+        /* background-color: #EF9595; */
     }
     .complete{
-        background-color: #5B9A8B;
+        /* background-color: #89A3B2; */
+        background-color: #E4C666;
+        /* font-family: sans-serif; */
     }
     .add{
-        background-color: #9EB384;
+        background-color: #539165;
         color: white;
     }
     .details{
@@ -71,7 +81,7 @@
             <div class="col-8 mt-4">
                 <div class="bg-white shadow p-4 rounded">
                     <div class="card mb-3 custom-primary">
-                        <h4 class="text-white ps-3 pt-2 pb-2"><i class="fa-solid fa-clipboard-list fa-lg me-2"></i>To Do List</h4>
+                        <h4 class="text-white ps-3 pt-3 pb-2"><i class="fa-solid fa-clipboard-list fa-lg me-2"></i>To Do List</h4>
                     </div>
                     <form #taskForm="ngForm" class="m-2">
                         <div class="mb-3">
@@ -99,7 +109,7 @@
                         </button>
                     </div>
                     <div *ngIf="showIncompleteTasks">
-                        <h4 class="text-primary mt-4">Incomplete Tasks:</h4>
+                        <h4 class="text-danger mt-4" style="font-family: sans-serif;">Incomplete Tasks:</h4>
                         <div style="overflow-y:auto; max-height: 350px;">
                             <div class="m-3" *ngFor="let task of incompleteTaskArr">
                                 <div class="p-3 rounded border shadow">
@@ -127,7 +137,7 @@
                         </div>
                     </div>
                     <div *ngIf="showCompleteTasks">
-                        <h4 class="text-success mt-4">Completed Tasks:</h4>
+                        <h4 class="text-success mt-4" style="font-family: sans-serif;">Completed Tasks:</h4>
                         <div style="overflow-y:auto; max-height: 350px;">
                             <div class="m-3" *ngFor="let task of completedTaskArr">
                                 <div class="p-3 rounded border shadow">
